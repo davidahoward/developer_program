@@ -1,13 +1,12 @@
 name: starfish-sensortag-app 
-version: '0.1' 
+version: '0.2' 
 #list of architectures the snap may run on. Defaults to [all].
 #architectures: 
 #	- all | amd64 | i386 | armhf
 architectures: [ armhf ]
-summary: Fetching TI-Sensortag data and posting to Starfish Data Platform
+summary: SSN Starfish Data Platform example using BLE SensorTag
 description: |
-     This snap app fetch the sensor's data from TI-Sensortag CC2650 and 
-     Post the same to Starfish Data Platform
+      Fetch TI BLE CC2650 SensorTag data and post it to SSN Starfish Data Platform
 grade:  devel
 confinement: devmode
 
@@ -15,9 +14,9 @@ apps:
   run:
     command: bin/nodeapp
     plugs: [bluetooth-control, network-bind, network]
-  hciconfig:
-    command: usr/bin/hciconfig
-    plugs: [  bluetooth-control ]
+#  hciconfig:
+#    command: usr/bin/hciconfig
+#    plugs: [  bluetooth-control ]
   hcitool:
     command: usr/bin/hcitool
     plugs: [ bluetooth-control ]
@@ -45,48 +44,19 @@ parts:
       - request-promise-native
       - inotify
       - jsonwebtoken
-      -  request@^2.34
-
-  bluepy:
-    plugin: python3
-    source: bluepy
-    build-packages: [libglib2.0-dev]
+      - request@^2.34
+#!dh getting unmet dependancy error
 
   bluez:
-    plugin: autotools
-    source: https://www.kernel.org/pub/linux/bluetooth/bluez-5.43.tar.xz
-    configflags:
-      - --prefix=/usr
-      - --libexec=/usr/lib/
-      - --enable-experimental
-      - --enable-snappy
-      - --enable-threads
-      - --disable-cups
-      - --disable-monitor
-      - --enable-obex
-      - --disable-systemd
-      - --disable-silent-rules
-    build-packages:
-      - libglib2.0-dev
-      - libdbus-1-dev
-      - libical-dev
-      - libreadline6-dev
-      - libudev-dev
-      - pkg-config
-      - quilt
+    plugin: nil
     stage-packages:
-      - libical1a
-    filesets:
-      libical1a:
-        - usr/lib/*/libical*
-    prime:
-      - usr/lib/bluetooth/bluetoothd
-      - usr/bin/bluetoothctl
-      - usr/bin/hciconfig
-      - usr/bin/hcitool
-      - usr/share/doc/libical1a/copyright
-      - $libical1a
+      - bluez
 
+  bluepy:
+    plugin: python
+    source: bluepy
+    build-packages: [libglib2.0-dev]
+      
   move:
      plugin: dump
      source: bin
