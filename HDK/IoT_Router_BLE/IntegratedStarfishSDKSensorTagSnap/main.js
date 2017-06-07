@@ -27,7 +27,7 @@ if (delayInObs == undefined) {
 
 // Creating an object of StarfishService to communicate with the Starfish Studio platform
 const options = {
-        'endpoint' : 'https://poc.api.ssniot.cloud',
+        'endpoint' : 'https://api.data-platform.developer.ssni.com', // 'https://poc.api.ssniot.cloud',
         'credentials' : {
          'clientId' : process.argv[2],
          'clientSecret' : process.argv[3]
@@ -39,7 +39,10 @@ var starfish = new StarfishService(options)
 var deviceId = 0;  //Variable to store the device ID generated for the device to be registered
 const testDevice = {"deviceType": "SensorTag", "domainInfo": {"modelName": "CC2650", "macaddress": process.argv[4]}} //Variable to store the info for the device to be registered
 
- //Registering a device and obtaining the device ID if registered successfully else prompt error message and exit
+//!dh attempt to find a device matching the test device
+//!dh if not found, create a new one
+
+//Registering a device and obtaining the device ID if registered successfully else prompt error message and exit
 starfish.postDevice(testDevice, (err, response) => {
  if (err) {
      console.log("Error!!postDevice: " + err);

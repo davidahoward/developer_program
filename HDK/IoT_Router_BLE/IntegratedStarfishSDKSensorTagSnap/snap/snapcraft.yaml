@@ -3,7 +3,9 @@ version: '0.2'
 #list of architectures the snap may run on. Defaults to [all].
 #architectures: 
 #	- all | amd64 | i386 | armhf
-architectures: [ armhf ]
+# architectures: [ amd64 ]  #! linux VM/Desktop
+architectures: [ armhf ]    # Embedded platform/SSN IoTR
+
 summary: SSN Starfish Data Platform example using BLE SensorTag
 description: |
       Fetch TI BLE CC2650 SensorTag data and post it to SSN Starfish Data Platform
@@ -44,13 +46,13 @@ parts:
       - request-promise-native
       - inotify
       - jsonwebtoken
-      - request@^2.34
-#!dh getting unmet dependancy error
+      - request@^2.40
 
+# Part installs Ubuntu packages
   bluez:
     plugin: nil
     stage-packages:
-      - bluez
+      - bluez           # provides /usr/bin/hcitool
 
   bluepy:
     plugin: python

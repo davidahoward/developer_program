@@ -7,7 +7,7 @@ a) The machine running the snap must have proper internet connectivity.
 b) Latest version (v2.28) of Snapcraft tool must be installed on system.  
 
 # Build the snap
-1. Make the snap : ```~$ sudo snapcraft```
+1. Make the snap : ```~$ sudo snapcraft```  #!dh sudo not needed
  
    When the process completes then you can see "starfish-sensortag-app_0.1_armhf.snap" in the current directory. 
 
@@ -20,7 +20,7 @@ After installing the snap you should be able to see the below snap apps in the `
 
 a) `starfish-sensortag-app.run`
 
-b) `starfish-sensortag-app.hciconfig` 
+b) `starfish-sensortag-app.hciconfig` #!dh removed...
 
 c) `starfish-sensortag-app.hcitool`
 
