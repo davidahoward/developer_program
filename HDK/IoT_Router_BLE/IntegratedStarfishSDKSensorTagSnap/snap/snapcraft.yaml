@@ -1,5 +1,5 @@
 name: starfish-sensortag-app 
-version: '0.2' 
+version: '0.3' 
 #list of architectures the snap may run on. Defaults to [all].
 #architectures: 
 #	- all | amd64 | i386 | armhf
@@ -10,7 +10,7 @@ summary: SSN Starfish Data Platform example using BLE SensorTag
 description: |
       Fetch TI BLE CC2650 SensorTag data and post it to SSN Starfish Data Platform
 grade:  devel
-confinement: devmode
+confinement: strict
 
 apps:
   run:
@@ -43,10 +43,10 @@ parts:
     source: .
     plugin: nodejs
     node-packages: 
+      - request@^2.34
       - request-promise-native
       - inotify
       - jsonwebtoken
-      - request@^2.40
 
 # Part installs Ubuntu packages
   bluez:
@@ -57,7 +57,7 @@ parts:
   bluepy:
     plugin: python
     source: bluepy
-    build-packages: [libglib2.0-dev]
+    build-packages: [libglib2.0-dev, python3-dev] #!dh Bluepy-helper not building, needed to add python3-dev
       
   move:
      plugin: dump

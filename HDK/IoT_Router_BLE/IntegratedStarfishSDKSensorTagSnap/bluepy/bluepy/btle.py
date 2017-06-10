@@ -104,7 +104,7 @@ class Service:
 
     def getCharacteristics(self, forUUID=None):
         if not self.chars: # Unset, or empty
-            self.chars = self.peripheral.getCharacteristics(self.hndStart, self.hndEnd)
+            self.chars = [] if self.hndEnd <= self.hndStart else self.peripheral.getCharacteristics(self.hndStart, self.hndEnd)
         if forUUID is not None:
             u = UUID(forUUID)
             return [ch for ch in self.chars if ch.uuid==u]
@@ -348,9 +348,9 @@ class Peripheral(BluepyHelper):
         (self.deviceAddr, self.addrType, self.iface) = (None, None, None)
 
         if isinstance(deviceAddr, ScanEntry):
-            self.connect(deviceAddr.addr, deviceAddr.addrType, deviceAddr.iface)
+            self._connect(deviceAddr.addr, deviceAddr.addrType, deviceAddr.iface)
         elif deviceAddr is not None:
-            self.connect(deviceAddr, addrType, iface)
+            self._connect(deviceAddr, addrType, iface)
 
     def setDelegate(self, delegate_): # same as withDelegate(), deprecated
         return self.withDelegate(delegate_)
@@ -380,7 +380,7 @@ class Peripheral(BluepyHelper):
                     continue
             return resp
 
-    def connect(self, addr, addrType=ADDR_TYPE_PUBLIC, iface=None):
+    def _connect(self, addr, addrType=ADDR_TYPE_PUBLIC, iface=None):
         if len(addr.split(":")) != 6:
             raise ValueError("Expected MAC address, got %s" % repr(addr))
         if addrType not in (ADDR_TYPE_PUBLIC, ADDR_TYPE_RANDOM):
@@ -400,6 +400,12 @@ class Peripheral(BluepyHelper):
             self._stopHelper()
             raise BTLEException(BTLEException.DISCONNECTED,
                                 "Failed to connect to peripheral %s, addr type: %s" % (addr, addrType))
+
+    def connect(self, addr, addrType=ADDR_TYPE_PUBLIC, iface=None):
+        if isinstance(addr, ScanEntry):
+            self._connect(addr.addr, addr.addrType, addr.iface)
+        elif addr is not None:
+            self._connect(addr, addrType, iface)
 
     def disconnect(self):
         if self._helper is None:

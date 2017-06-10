@@ -2,6 +2,7 @@
 
 from setuptools.command.install import install
 from setuptools.command.develop import develop
+from setuptools.command.build_ext import build_ext
 from setuptools import setup
 import subprocess
 import shlex
@@ -13,7 +14,7 @@ def pre_install():
     """Do the custom compiling of the bluepy-helper executable from the makefile"""
     try:
         print("Working dir is " + os.getcwd())
-        for cmd in [ "make -C ./bluepy clean", "make -C bluepy" ]:
+        for cmd in [ "make -C ./bluepy clean", "make -C bluepy -j1" ]:
             print("execute " + cmd)
             msgs = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
@@ -47,14 +48,18 @@ class BluepyInstall(install):
 class BluepyDevelop(develop):
     pass
 
+@setup_command
+class BluepyBuildExt(build_ext):
+    pass
+
 setup (
     name='bluepy',
-    version='1.0.5',
+    version='1.1.0',
     description='Python module for interfacing with BLE devices through Bluez',
     author='Ian Harvey',
     author_email='website-contact@fenditton.org',
     url='https://github.com/IanHarvey/bluepy',
-    download_url='https://github.com/IanHarvey/bluepy/tarball/v/1.0.5',
+    download_url='https://github.com/IanHarvey/bluepy/tarball/v/1.1.0',
     keywords=[ 'Bluetooth', 'Bluetooth Smart', 'BLE', 'Bluetooth Low Energy' ],
     classifiers=[
         'Programming Language :: Python :: 2.7',
@@ -65,7 +70,11 @@ setup (
     package_data={
         'bluepy': ['bluepy-helper', '*.json', 'bluez-src.tgz', 'bluepy-helper.c', 'Makefile']
     },
-    cmdclass={'install': BluepyInstall, 'develop': BluepyDevelop},
+    cmdclass={
+        'install': BluepyInstall,
+        'develop': BluepyDevelop,
+        'build_ext': BluepyBuildExt,
+    },
     entry_points={
         'console_scripts': [
             'sensortag=bluepy.sensortag:main',
